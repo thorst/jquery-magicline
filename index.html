@@ -8,6 +8,331 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    
+    <style>
+      /*
+	 CSS-Tricks Example - MagicLine Demo
+	 by Chris Coyier
+	 http://css-tricks.com
+*/
+
+* { margin: 0; padding: 0; }
+body { font: 14px Georgia, serif; background: #2F2626; color: #eee; }
+
+header { padding: 100px 0 0 0; display: block; }
+header h1 { width: 960px; margin: 0 auto; }
+a { color: #eee; }
+a:hover { color: white; }
+
+.nav-wrap { 
+	margin: 50px auto; 
+	background-color: rgba(0,0,0,0.6); 
+	border-top:    2px solid white; 
+	border-bottom: 2px solid white; 
+}
+
+/* Clearfix */
+.group:after { visibility: hidden; display: block; content: ""; clear: both; height: 0; }
+*:first-child+html .group { zoom: 1; } /* IE7 */
+
+
+
+/* Example One */
+#example-one { 
+	margin: 0 auto; 
+	list-style: none; 
+	position: relative; 
+	width: 960px; 
+    /*overflow-y:hidden;*/
+}
+#example-one li { 
+	display: inline-block;	
+}
+#example-one a { 
+	color: #bbb; 
+	font-size: 14px; 
+	float: left;
+	padding: 6px 10px 4px 10px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+#example-one a:hover { 
+	color: white; 
+}
+#magic-line,#magic-line-backup { 
+	position: absolute;
+	bottom: -2px; 
+	left: 0; 
+	/*width: 100px;*/ 
+	height: 2px; 
+	background: #fe4902;
+}
+.current_page_item a { 
+	color: white !important; 
+}
+.ie6 #example-one li, .ie7 #example-one li { 
+	display: inline; 
+}
+.ie6 #magic-line {
+	bottom: -3px;
+}
+
+
+/* Example Two */
+#example-two { 
+	margin: 0 auto; 
+	list-style: none; 
+	position: relative; 
+	width: 960px; 
+}
+#example-two li { 
+	display: inline-block; 
+}
+#example-two li a { 
+	position: relative; 
+	z-index: 200; 
+	color: #bbb; 
+	font-size: 14px; 
+	display: block; 
+	float: left; 
+	padding: 6px 10px 4px 10px;
+	text-decoration: none;
+	text-transform: uppercase; 
+}
+#example-two li a:hover { 
+	color: white; 
+}
+#example-two #magic-line-two { 
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	width: 100px; 
+	background: #900; 
+	z-index: 100; 
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+.current_page_item_two a { 
+	color: white !important; 
+}
+.ie6 #example-two li, .ie7 #example-two li {
+	display: inline;
+}
+
+
+
+#mySwipe div b {
+  display:block;
+  font-weight:bold;
+  color:#14ADE5;
+  font-size:20px;
+  text-align:center;
+  margin:10px;
+  padding:100px 10px;
+  box-shadow: 0 1px #EBEBEB;
+  background: #fff;
+  border-radius: 3px;
+  border: 1px solid;
+  border-color: #E5E5E5 #D3D3D3 #B9C1C6;
+}
+/* Swipe 2 required styles */
+
+                .swipe {
+                    overflow: hidden;
+                    visibility: hidden;
+                    position: relative;
+                }
+
+                .swipe-wrap {
+                    overflow: hidden;
+                    position: relative;
+                }
+
+                    .swipe-wrap > div {
+                        float: left;
+                        width: 100%;
+                        position: relative;
+                    }
+
+                /* END required styles */
+    </style>
+    <script>
+       
+        // DOM Ready
+        $(function () {
+
+            var $el, leftPos, newWidth;
+            $mainNav2 = $("#example-two");
+
+            /*
+                EXAMPLE ONE
+            */
+
+            /* Add Magic Line markup via JavaScript, because it ain't gonna work without */
+            $("#example-one").append("<li id='magic-line'></li><li id='magic-line-backup'></li>");
+
+            /* Cache it */
+            var $magicLine = $("#magic-line"),
+                $magicLineBackup = $("#magic-line-backup");
+
+            $magicLine
+                .width($(".current_page_item").width())
+                .css("left", $(".current_page_item a").position().left)
+                .data("origLeft", $magicLine.position().left)
+                .data("origWidth", $magicLine.width());
+
+           
+            //$("#example-one li").find("a").hover(function () {
+            //    $el = $(this);
+            //    leftPos = $el.position().left;
+            //    newWidth = $el.parent().width();
+
+            //    $magicLine.stop().animate({
+            //        left: leftPos,
+            //        width: newWidth
+            //    });
+            //}, function () {
+            //    $magicLine.stop().animate({
+            //        left: $magicLine.data("origLeft"),
+            //        width: $magicLine.data("origWidth")
+            //    });
+            //});
+
+            var magicLine = {
+                idx: 0,
+                wrap: true,
+                els:$("#example-one li a"),
+                move: function (idx) {
+                    // Get element to move under
+                    $el = $("#example-one li a:eq(" + idx + ")");
+                   
+                    // Get position to move to
+                    leftPos = $el.position().left;
+                    newWidth = $el.parent().width();
+
+                    $magicLine.stop().animate({
+                        left: leftPos,
+                        width: newWidth
+                    });
+                },
+                wrapTowardsEnd: function () {
+                    // First we need to get the end to wrap to
+                    var last = magicLine.els[magicLine.els.length - 1],
+                        $last = $(last),
+                        right = $last.position().left + $last.parent().width();
+
+                    var first = magicLine.els[0],
+                        $first = $(first),
+                        left = $first.position().left,
+                        width = $first.parent().width();
+
+                    // Now anitmate it out of view
+                    $magicLine
+                        .animate({ left: right, width: 0 }, { queue: false,  complete:function() { 
+                                    $(this).css({ left: left, width: width });
+                                }});
+
+                    // While animating into view
+                    $magicLineBackup
+                        .css({ left: left })
+                        .animate({ width: width }, { queue: false, complete: function () {
+                                $(this).css({ width: 0 });
+                         }});
+                },
+                wrapTowardsStart: function () {
+                    // First we need to get the end to wrap to
+                    var last = magicLine.els[magicLine.els.length - 1],
+                        $last = $(last),
+                        left = $last.position().left,
+                        width = $last.parent().width(),
+                        right = $last.position().left + $last.parent().width();
+
+                    // Now anitmate it out of view
+                    $magicLine
+                        .animate({ width: 0 }, {
+                            queue: false, complete: function () {
+                                $(this).css({ left: left, width: width });
+                            }
+                        });
+
+                    // While animating into view
+                    $magicLineBackup
+                        .css({ left: right })
+                        .animate({ left: left, width: width }, {
+                            queue: false, complete: function () {
+                                $(this).css({ width: 0 });
+                            }
+                        });
+                },
+                moveNext: function () {
+                    magicLine.idx++;
+                    if (magicLine.idx > magicLine.els.length-1 && magicLine.wrap) {
+                        magicLine.idx = 0;
+                        magicLine.wrapTowardsEnd();
+                        return;
+                    }
+                    magicLine.move(magicLine.idx);
+                },
+                movePrevious: function () {
+                    magicLine.idx--;
+                    if (magicLine.idx < 0 && magicLine.wrap) {
+                        magicLine.idx = magicLine.els.length - 1;
+                        magicLine.wrapTowardsStart();
+                        return;
+                    }
+                    magicLine.move(magicLine.idx);
+                }
+            };
+            
+            
+            $(".next").click(function () {
+                
+                magicLine.moveNext();
+            });
+            $(".previous").click(function () {
+                
+                magicLine.movePrevious();
+            });
+
+            /*
+                EXAMPLE TWO
+            */
+
+            $mainNav2.append("<li id='magic-line-two'></li>");
+
+            var $magicLineTwo = $("#magic-line-two");
+
+            $magicLineTwo
+                .width($(".current_page_item_two").width())
+                .height($mainNav2.height())
+                .css("left", $(".current_page_item_two a").position().left)
+                .data("origLeft", $(".current_page_item_two a").position().left)
+                .data("origWidth", $magicLineTwo.width())
+                .data("origColor", $(".current_page_item_two a").attr("rel"));
+
+            $("#example-two a").hover(function () {
+                $el = $(this);
+                leftPos = $el.position().left;
+                newWidth = $el.parent().width();
+                $magicLineTwo.stop().animate({
+                    left: leftPos,
+                    width: newWidth,
+                    backgroundColor: $el.attr("rel")
+                })
+            }, function () {
+                $magicLineTwo.stop().animate({
+                    left: $magicLineTwo.data("origLeft"),
+                    width: $magicLineTwo.data("origWidth"),
+                    backgroundColor: $magicLineTwo.data("origColor")
+                });
+            });
+
+            /* Kick IE into gear */
+            $(".current_page_item_two a").mouseenter();
+
+        });
+    </script>
   </head>
   <body>
     <section class="page-header">
@@ -19,6 +344,35 @@
     </section>
 
     <section class="main-content">
+      
+       <div class="nav-wrap">
+            <ul class="group" id="example-one">
+                <li class="current_page_item"><a href="#">Home</a></li>
+                <li><a href="#">Buy Tickets</a></li>
+                <li><a href="#">Group Sales</a></li>
+                <li><a href="#">Reviews</a></li>
+                <li><a href="#">The Show</a></li>
+                <li><a href="#">Videos</a></li>
+                <li><a href="#">Photos</a></li>
+                <li><a href="#">Magic Shop</a></li>
+            </ul>
+        </div>
+        <a href="#" class="previous btn btn-default"><span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span> Previous</a>
+        <a href="#" class="next btn btn-default"><span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span> Next</a>
+
+        <div class="nav-wrap">
+            <ul id="example-two" class="group">
+                <li><a href="#" rel="#fe4902">Home</a></li>
+                <li><a href="#" rel="#A41322">Buy Tickets</a></li>
+                <li><a href="#" rel="#C6AA01">Group Sales</a></li>
+                <li class="current_page_item_two"><a href="#" rel="#900">Reviews</a></li>
+                <li><a href="#" rel="#D40229">The Show</a></li>
+                <li><a href="#" rel="#98CEAA">Videos</a></li>
+                <li><a href="#" rel="#1B9B93">Photos</a></li>
+                <li><a href="#" rel="#8DC91E">Magic Shop</a></li>
+                <li id="magic-line-two" style="width: 86px; height: 30px; left: 303px; background-color: rgb(153, 0, 0); overflow: hidden;"></li>
+            </ul>
+        </div>
       <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
 
